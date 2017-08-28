@@ -1,15 +1,14 @@
-package org.ycwu.simple;
+package org.example.simple;
 
-import static org.junit.Assert.*;
-
-import java.util.LinkedList;
 
 import org.junit.Test;
 
+import java.util.LinkedList;
+
 /**
- * Լɪ��<br>
- * ����N��������Χ��һȦ���ӵ�1���˿�ʼ��������M���˳��У�Ȼ��ӳ��е���һ���˿�ʼ������������M�����ֳ��У�...����˷��������е���ȫ������Ϊֹ����N���˵ı�ŷֱ�Ϊ1��2��...��N����ӡ�����е�˳��
- * 
+ * 约瑟夫环<br>
+ * 设有N个人依次围成一圈，从第1个人开始报数，第M个人出列，然后从出列的下一个人开始报数，数到第M个人又出列，...，如此反复到所有的人全部出列为止，设N个人的编号分别为1，2，...，N，打印出出列的顺序
+ *
  * @author ycwu
  *
  */

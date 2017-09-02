@@ -77,8 +77,8 @@ public class ReverseLinkedList {
         }
 
         // prev | curr | next
-        ListNode prev = head;
-        ListNode curr = head.next;
+        ListNode prev = null;
+        ListNode curr = head;
         ListNode next = null;
 
         while (curr != null) {
@@ -88,8 +88,6 @@ public class ReverseLinkedList {
             curr = next;
         }
 
-        // head已经是末尾了，要断开旧的引用
-        head.next = null;
         // prev已经是第一个元素
         head = prev;
         return head;

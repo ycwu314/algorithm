@@ -22,33 +22,21 @@ public class MergeSortedListV2 {
             return l1;
         }
 
-        ListNode head;
-        if (l1.val < l2.val) {
-            head = l1;
-            l1 = l1.next;
-        } else {
-            head = l2;
-            l2 = l2.next;
-        }
 
-        ListNode l3 = head;
-        outer:
+        ListNode l3 = new ListNode(0);
+        ListNode head = l3;
+
+
         while (l1 != null && l2 != null) {
-            while (l1.val <= l2.val) {
+
+            if (l1.val <= l2.val) {
                 head.next = l1;
                 head = head.next;
                 l1 = l1.next;
-                if (l1 == null) {
-                    break outer;
-                }
-            }
-            while (l2.val <= l1.val) {
+            } else {
                 head.next = l2;
                 head = head.next;
                 l2 = l2.next;
-                if (l2 == null) {
-                    break outer;
-                }
             }
         }
 
@@ -58,6 +46,6 @@ public class MergeSortedListV2 {
             head.next = l2;
         }
 
-        return l3;
+        return l3.next;
     }
 }

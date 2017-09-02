@@ -34,4 +34,19 @@ public class ListNodeUtil {
         }
         return a.toString();
     }
+
+    public static int[] toArray(ListNode list) {
+        List<Integer> a = new ArrayList<>();
+        ListNode head = list;
+        while (head != null) {
+            a.add(head.val);
+            head = head.next;
+        }
+
+        int[] res = new int[a.size()];
+        for (int i = 0, len = a.size(); i < len; i++) {
+            res[i] = a.get(i);
+        }
+        return res;
+    }
 }

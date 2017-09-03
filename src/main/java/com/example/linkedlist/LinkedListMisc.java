@@ -302,4 +302,178 @@ public class LinkedListMisc {
         Assert.assertTrue(a2 == findCircularEntry(a1));
 
     }
+
+    ////////////////////////////////////////
+
+    /**
+     * 两个无环链表是否相交
+     *
+     * @param a1
+     * @param a2
+     */
+    public static boolean checkCrossWithoutCircle(ListNode a1, ListNode a2) {
+        if (a1 == null || a2 == null) {
+            return false;
+        }
+
+        ListNode t1 = a1, t2 = a2;
+        while (t1 != null && t1.next != null) {
+            t1 = t1.next;
+        }
+        while (t2 != null && t2.next != null) {
+            t2 = t2.next;
+        }
+        return t1 == t2;
+
+    }
+
+
+    /**
+     * set list 1 tail.next = list 2 head. start from tail(a1), then head(a2) will come across itself.
+     * <p>
+     * slower than V1
+     *
+     * @param a1
+     * @param a2
+     * @return
+     */
+    public static boolean checkCrossWithoutCircleV2(ListNode a1, ListNode a2) {
+        if (a1 == null || a2 == null) {
+            return false;
+        }
+
+        ListNode t1 = a1;
+        while (t1 != null && t1.next != null) {
+            t1 = t1.next;
+        }
+
+        t1.next = a2;
+        ListNode h2 = t1;
+        while (h2 != null && h2.next != null) {
+            h2 = h2.next;
+            if (h2 == t1) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
+    @Test
+    public void testCheckCross() {
+        Assert.assertFalse(checkCrossWithoutCircle(ListNodeUtil.createList(new int[]{1, 2, 3}), ListNodeUtil.createList(new int[]{1})));
+        Assert.assertFalse(checkCrossWithoutCircle(ListNodeUtil.createList(new int[]{1, 2, 3}), ListNodeUtil.createList(new int[]{})));
+
+        ListNode a1 = new ListNode(1);
+        ListNode a2 = new ListNode(2);
+        ListNode a3 = new ListNode(3);
+        ListNode a4 = new ListNode(4);
+        ListNode a5 = new ListNode(5);
+        ListNode a6 = new ListNode(6);
+        ListNode a7 = new ListNode(7);
+
+        // 1--2--3--4--5
+        a1.next = a2;
+        a2.next = a3;
+        a3.next = a4;
+        a4.next = a5;
+
+        // 6--7--3--4--5
+        a6.next = a7;
+        a7.next = a3;
+
+        Assert.assertTrue(checkCrossWithoutCircle(a1, a6));
+    }
+
+
+    /**
+     * can handle case for having circle
+     *
+     * @param a1
+     * @param a2
+     * @return
+     */
+    public static boolean checkCrossWithCircle(ListNode a1, ListNode a2) {
+        if (a1 == null || a2 == null) {
+            return false;
+        }
+
+        // find entry node of circle, null if it is not circular
+        ListNode c1 = findCircularEntry(a1);
+        ListNode c2 = findCircularEntry(a2);
+
+        if (c1 == null && c2 == null) {
+            return checkCrossWithoutCircle(a1, a2);
+        } else if ((c1 == null && c2 != null) || (c1 != null && c2 == null)) {
+            // one has circle, the other one has not. they cant cross each other.
+            return false;
+        } else if (c1 == c2) {
+            return true;
+        }
+
+        // both of them have circles.
+        ListNode n = c1.next;
+        while (n != c1) {
+            if (n == c2) {
+                return true;
+            }
+            n = n.next;
+        }
+
+        return false;
+    }
+
+    @Test
+    public void testCrossWithOrWithoutCircle() {
+        // both have no circles
+        Assert.assertFalse(checkCrossWithCircle(ListNodeUtil.createList(new int[]{1, 2}), ListNodeUtil.createList(new int[]{3, 4, 5})));
+        Assert.assertFalse(checkCrossWithCircle(ListNodeUtil.createList(new int[]{}), ListNodeUtil.createList(new int[]{3, 4, 5})));
+
+        ListNode a1 = new ListNode(1);
+        ListNode a2 = new ListNode(2);
+        ListNode a3 = new ListNode(3);
+        ListNode a4 = new ListNode(4);
+        ListNode a5 = new ListNode(5);
+        ListNode a6 = new ListNode(6);
+        ListNode a7 = new ListNode(7);
+
+        // 1--2--3--4--5
+        a1.next = a2;
+        a2.next = a3;
+        a3.next = a4;
+        a4.next = a5;
+
+        // 6--7--3--4--5
+        a6.next = a7;
+        a7.next = a3;
+
+        Assert.assertTrue(checkCrossWithCircle(a1, a6));
+
+        // one has circle, the other not
+        ListNode a11 = new ListNode(11);
+        ListNode a12 = new ListNode(12);
+        ListNode a13 = new ListNode(13);
+        ListNode a14 = new ListNode(14);
+        a11.next = a12;
+        a12.next = a13;
+        a13.next = a14;
+        a14.next = a12;
+        Assert.assertFalse(checkCrossWithCircle(ListNodeUtil.createList(new int[]{1, 2, 3, 4, 5}), a11));
+
+        // both has circle, but not cross
+        ListNode a21 = new ListNode(21);
+        ListNode a22 = new ListNode(22);
+        ListNode a23 = new ListNode(23);
+        ListNode a24 = new ListNode(24);
+        a21.next = a22;
+        a22.next = a23;
+        a23.next = a24;
+        a24.next = a22;
+        Assert.assertFalse(checkCrossWithCircle(a11, a21));
+
+        // both has circle, and cross
+        a24.next = a13;
+        Assert.assertTrue(checkCrossWithCircle(a11, a21));
+    }
 }

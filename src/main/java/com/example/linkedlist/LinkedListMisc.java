@@ -13,7 +13,7 @@ public class LinkedListMisc {
      *
      * @param target
      */
-    public void deleteOneNode(ListNode target) {
+    public static void deleteOneNode(ListNode target) {
         // cant not delete the tail node in such way
         if (target == null || target.next == null) {
             return;
@@ -29,11 +29,17 @@ public class LinkedListMisc {
     @Test
     public void testDeleteOneNode() {
         ListNode a1 = ListNodeUtil.createList(new int[]{1, 2, 3, 4, 5});
-        LinkedListMisc misc = new LinkedListMisc();
-        ListNode target = a1.next.next;
-        System.out.println("delete " + target.val);
-        misc.deleteOneNode(target);
-        System.out.println(ListNodeUtil.toString(a1));
+        ListNode target = a1.next.next; // delete node[val=3]
+        deleteOneNode(target);
+
+        ListNode n = a1;
+        while (n != null) {
+            if (n.val == 3) {
+                Assert.fail();
+            }
+            n = n.next;
+        }
+
     }
 
 
@@ -145,31 +151,34 @@ public class LinkedListMisc {
             return head;
         }
 
-        ListNode p1 = head;
-        ListNode p2 = head;
+        // fast tries to move to 2^n position
+        ListNode fast = head;
+        // when fast reaches 2^n, slow moves to 2^(n-1), which is previous round start position of fast
+        ListNode slow = head;
+        // 2^k + steps = 2^n, where k=n-1 or k=n
         int steps, count = 1;
 
-        while (p2 != null) {
+        while (fast != null) {
             count *= 2;
             steps = 0;
-            ListNode start = p2;
-            while (steps < count && p2 != null) {
-                p2 = p2.next;
+            ListNode start = fast;
+            while (steps < count && fast != null) {
+                fast = fast.next;
                 steps++;
             }
 
-            if (p2 == null) {
+            if (fast == null) {
                 int k = (steps % 2 == 0) ? steps / 2 : (steps / 2 + 1);
                 while (k-- > 0) {
-                    p1 = p1.next;
+                    slow = slow.next;
                 }
             } else {
-                p1 = start;
+                slow = start;
             }
         }
 
 
-        return p1;
+        return slow;
     }
 
     @Test
@@ -194,12 +203,14 @@ public class LinkedListMisc {
             return false;
         }
 
-        ListNode p1 = head, p2 = head;
-        while (p2 != null && p2.next != null) {
-            p2 = p2.next.next;
-            p1 = p1.next;
+        // slow moves 1 node for each time,
+        // fast move2 2 node for each time
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
 
-            if (p1 == p2) {
+            if (slow == fast) {
                 return true;
             }
         }
@@ -230,17 +241,25 @@ public class LinkedListMisc {
 
     ////////////////////////////////////////
 
+    /**
+     * 链表环的入口
+     *
+     * @param head
+     * @return
+     */
     public static ListNode findCircularEntry(ListNode head) {
-        if(head==null){
+        if (head == null) {
             return null;
         }
 
-        ListNode p1 = head, p2 = head;
+        // slow moves 1 node for each time,
+        // fast move2 2 node for each time
+        ListNode slow = head, fast = head;
         boolean circular = false;
-        while (p2 != null && p2.next != null) {
-            p2 = p2.next.next;
-            p1 = p1.next;
-            if (p2 == p1) {
+        while (fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) {
                 circular = true;
                 break;
             }
@@ -251,14 +270,14 @@ public class LinkedListMisc {
             return null;
         }
 
-        // has circle
-        p2 = head;
-        while (p2 != p1) {
-            p2 = p2.next;
-            p1 = p1.next;
+        // has circle, reset fast pointer, and moves 1 node for each time
+        fast = head;
+        while (fast != slow) {
+            fast = fast.next;
+            slow = slow.next;
         }
 
-        return p2;
+        return fast;
     }
 
 
@@ -280,7 +299,7 @@ public class LinkedListMisc {
         a4.next = a5;
         a5.next = a2;
 
-        Assert.assertTrue(a2== findCircularEntry(a1));
+        Assert.assertTrue(a2 == findCircularEntry(a1));
 
     }
 }

@@ -1,19 +1,14 @@
 package com.example.stack;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.Stack;
 
 /**
  * Created by Administrator on 2017/8/30.
  */
 public class ValidParenthesesV2 {
-
-    public static void main(String[] args) {
-        ValidParenthesesV2 p = new ValidParenthesesV2();
-        System.out.println(p.isValid("()[]{}"));
-        System.out.println(p.isValid("([)]"));
-        System.out.println(p.isValid("(]"));
-
-    }
 
     public boolean isValid(String s) {
         if (s.length() % 2 != 0) {
@@ -37,5 +32,13 @@ public class ValidParenthesesV2 {
         }
 
         return stack.isEmpty();
+    }
+
+    @Test
+    public void testValidParentheses() {
+        ValidParentheses p = new ValidParentheses();
+        Assert.assertTrue(p.isValid("()[]{}"));
+        Assert.assertFalse(p.isValid("([)]"));
+        Assert.assertFalse(p.isValid("(]"));
     }
 }

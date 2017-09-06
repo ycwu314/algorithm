@@ -144,6 +144,9 @@ public class Calculator {
             case '*':
                 return a * b;
             case '/':
+                if (b - 0 < 1e-10) {
+                    throw new ArithmeticException("divided by zero");
+                }
                 return a / b;
             case '%':
                 return a % b;
@@ -238,6 +241,13 @@ public class Calculator {
         }
         Assert.assertTrue(exception);
 
+        exception = false;
+        try {
+            calculate("1/0");
+        } catch (ArithmeticException e) {
+            exception = true;
+        }
+        Assert.assertTrue(exception);
 
         Assert.assertEquals(44, calculate("11+33"), 1e-10);
     }

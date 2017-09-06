@@ -10,73 +10,77 @@ import java.util.Stack;
  */
 public class Calculator {
 
+    static final char[] SUPPORTED_OPERATORS = new char[]{'(', ')', '+', '-', '*', '/', '^', '%', '.'};
+
     public static double calculate(String s) throws ArithmeticException {
         Stack<Integer> number = new Stack<>();
         Stack<Character> operator = new Stack<>();
 
+        StringBuilder numberStr = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
+
+            validate(ch);
 
             if (ch == ' ') {
                 continue;
             }
 
             if (isDigit(ch)) {
-                number.push(ch - '0');
+                numberStr.append(ch);
                 continue;
             }
 
-            // operator
-            if (operator.isEmpty()) {
-                if (ch == '(' || !number.isEmpty()) {
-                    operator.push(ch);
-                    continue;
-                } else {
-                    throw new ArithmeticException();
-                }
-            }
+            // found operator
+            // first push the number into stack
+            convertNumber(number, numberStr);
 
+            // only '(' can be the the first item of operator stack when number stack is empty, others cant
+            if (handleEmptyOperatorStack(operator, number, ch)) {
+                continue;
+            }
 
             char prevOp = operator.peek();
+
+
+            // special case for ()
             if (prevOp == '(' && ch == ')') {
                 operator.pop();
-                continue;
-            }
-
-            // if '(' is in the operator stack, then it has the lowest priority
-            // operator requires 2 number
-            if (prevOp == '(' || number.size() == 1) {
+            } else if (prevOp == '(') {
+                // if '(' is in the operator stack, then it has the lowest priority
                 operator.push(ch);
             } else if (ch == ')') {
+
                 // right parenthesis should not be pushed into stack,
                 // instead, pop the stack until it meets '('
                 while (operator.peek() != '(') {
-
                     int b = number.pop();
                     int a = number.pop();
-
                     number.push(compute(operator.pop(), a, b));
                 }
                 // pop for '('
                 operator.pop();
 
             } else if (compare(ch, prevOp) > 0) {
+                // push into stack for higher priority
                 operator.push(ch);
             } else {
 
+                // same or lower priority than prevOp, begin pop operation stack and calculate,
                 while (!operator.isEmpty() && operator.peek() != '(' && compare(ch, operator.peek()) <= 0) {
                     int b = number.pop();
                     int a = number.pop();
                     number.push(compute(operator.pop(), a, b));
                 }
                 operator.push(ch);
-
             }
         }
 
-        while (!operator.isEmpty())
 
-        {
+        // case for 1+51, digit is the last character
+        convertNumber(number, numberStr);
+
+        while (!operator.isEmpty()) {
             char op = operator.pop();
             if (op == '(') {
                 continue;
@@ -95,6 +99,40 @@ public class Calculator {
             throw new ArithmeticException();
         }
         return number.pop();
+    }
+
+    private static void validate(char ch) {
+        if (ch == ' ' || (ch >= '0' && ch <= '9')) {
+            return;
+        }
+
+        for (char op : SUPPORTED_OPERATORS) {
+            if (op == ch) {
+                return;
+            }
+        }
+
+        throw new ArithmeticException("illegal char : [" + ch + "]");
+    }
+
+    private static void convertNumber(Stack<Integer> number, StringBuilder numberStr) {
+        if (numberStr.length() > 0) {
+            number.push(Integer.parseInt(numberStr.toString()));
+            numberStr.delete(0, numberStr.length());
+        }
+    }
+
+    private static boolean handleEmptyOperatorStack(Stack<Character> operator, Stack<Integer> number, char ch) {
+        if (operator.isEmpty()) {
+            if (ch == '(' || !number.isEmpty()) {
+                operator.push(ch);
+                return true;
+            } else {
+                throw new ArithmeticException("operator [" + ch + "] cant be ");
+            }
+        }
+
+        return false;
     }
 
     private static int compute(char op, int a, int b) {
@@ -153,7 +191,7 @@ public class Calculator {
 
 
     @Test
-    public void test() {
+    public void testCalculate() {
         Assert.assertEquals(1, calculate("(1)"), 1e-10);
         Assert.assertEquals(1, calculate("1"), 1e-10);
         Assert.assertEquals(4, calculate("(1+3)"), 1e-10);
@@ -162,6 +200,7 @@ public class Calculator {
         Assert.assertEquals(5, calculate("(1*3+2)"), 1e-10);
         Assert.assertEquals(4, calculate("((1+3))"), 1e-10);
         Assert.assertEquals(-4, calculate("4-3-5"), 1e-10);
+        Assert.assertEquals(28, calculate("4+2*3*4"), 1e-10);
 
 
         Assert.assertEquals(4, calculate("1+3"), 1e-10);
@@ -199,6 +238,8 @@ public class Calculator {
         }
         Assert.assertTrue(exception);
 
+
+        Assert.assertEquals(44, calculate("11+33"), 1e-10);
     }
 }
 

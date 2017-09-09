@@ -185,4 +185,72 @@ public class ArrayMisc {
     }
 
 
+    ///////////////////////
+
+    /**
+     * 有一个二维数组(n*n),写程序实现从右上角到左下角沿主对角线方向打印。<br>
+     * 给定一个二位数组arr及题目中的参数n，请返回结果数组。
+     * <p>
+     * TODO any faster way?
+     *
+     * @param arr
+     * @param n
+     * @return
+     */
+    public static int[] arrayPrint(int[][] arr, int n) {
+        int[] ra = new int[n * n];
+        int z = 0;
+        // 从[n-1][n-1]开始打印右上角部分
+        for (int i = 0; i < n; i++) {           // 打印的回合数
+            for (int j = 0; j <= i; j++) {      // 每个回合打印的个数
+                ra[z++] = arr[j][n - 1 - i + j];
+            }
+        }
+
+        // 从[1][1]开始打印左下角部分
+        for (int i = n - 1; i >= 1; i--) {
+            for (int j = 0; j < i; j++) {
+                ra[z++] = arr[n - i + j][j];
+            }
+        }
+
+        return ra;
+    }
+
+
+    public static void print2DArray(int[][] a) {
+        for (int[] t : a) {
+            System.out.println(Arrays.toString(t));
+        }
+    }
+
+
+    public static void printArrayWithRowSize(int[] a, int rowSize) {
+        int k = 0;
+        for (int t : a) {
+            if (k == rowSize) {
+                System.out.println();
+                k = 0;
+            }
+            System.out.print(t + " ");
+            k++;
+        }
+        System.out.println();
+    }
+
+    @Test
+    public void testArrayPrint() {
+        int n = 4;
+        int[][] arr = new int[n][n];
+        for (int i = 0, j = 1; i < n; i++) {
+            for (int k = 0; k < n; k++) {
+                arr[i][k] = j++;
+            }
+        }
+
+        int[] ra = arrayPrint(arr, n);
+        Assert.assertArrayEquals(new int[]{4, 3, 8, 2, 7, 12, 1, 6, 11, 16, 5, 10, 15, 9, 14, 13}, ra);
+        printArrayWithRowSize(ra, n);
+    }
+
 }

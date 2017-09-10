@@ -253,4 +253,57 @@ public class ArrayMisc {
         printArrayWithRowSize(ra, n);
     }
 
+
+    ///////////////////////////
+
+    // 一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
+    // num1,num2分别为长度为1的数组。传出参数
+    // 将num1[0],num2[0]设置为返回结果
+    public static void findNumsAppearOnce(int[] array, int num1[], int num2[]) {
+        Set<Integer> set = new HashSet<>();
+        for (int i : array) {
+            if (set.contains(i)) {
+                set.remove(i);
+            } else {
+                set.add(i);
+            }
+        }
+        Iterator<Integer> it = set.iterator();
+        num1[0] = it.next();
+        num2[0] = it.next();
+    }
+
+
+    public static void findNumsAppearOnceV2(int[] array, int num1[], int num2[]) {
+        num1[0] = 0;
+        num1[0] = 0;
+
+        int s = 0;
+        for (int i : array) {
+            s ^= i;
+        }
+
+        // must have at least 1 bit is different
+        // find which bit is different
+        int b = 1;
+        while ((s & b) != b) {
+            b <<= 1;
+        }
+
+        // split the array into 2 parts by the different bit
+        for (int i : array) {
+            if ((i & b) != b) {
+                num1[0] ^= i;
+            } else {
+                num2[0] ^= i;
+            }
+        }
+    }
+
+    @Test
+    public void testFindNumsAppearOnce() {
+        int[] a = new int[1], b = new int[1];
+        findNumsAppearOnceV2(new int[]{2, 4, 3, 6, 3, 2, 5, 5}, a, b);
+        Assert.assertTrue((a[0] == 4 && b[0] == 6) || (b[0] == 4 && a[0] == 6));
+    }
 }

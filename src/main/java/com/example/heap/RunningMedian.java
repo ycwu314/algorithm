@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
  * <p>
  * <a href="http://posts.careerengine.us/p/57479aeb532b8ee75e0c4536">Google面试题14 | 寻找中位数</a>
  * <p>
- * <a href="http://gaocegege.com/Blog/algorithm/dynamicmedian"><最大最小堆计算动态中位数/a>
+ * <a href="http://gaocegege.com/Blog/algorithm/dynamicmedian">最大最小堆计算动态中位数</a>
  */
 public class RunningMedian<T> {
 

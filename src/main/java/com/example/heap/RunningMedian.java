@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
  * <p>
  * <a href="http://gaocegege.com/Blog/algorithm/dynamicmedian">最大最小堆计算动态中位数</a>
  */
-public class RunningMedian<T> {
+public class RunningMedian<T extends Number> {
 
     /**
      * store elements that are greater than the median
@@ -25,19 +25,16 @@ public class RunningMedian<T> {
 
     public Double getMedian() {
         if ((minHeap.size() + maxHeap.size()) % 2 == 0) {
-            return (Double.parseDouble(minHeap.peek().toString()) + Double.parseDouble(maxHeap.peek().toString())) / 2.0d;
+            return (minHeap.peek().doubleValue() + maxHeap.peek().doubleValue()) / 2.0d;
         } else {
-            return Double.parseDouble(minHeap.peek().toString());
+            return maxHeap.peek().doubleValue();
         }
     }
 
     public Double add(T x) {
         maxHeap.add(x);
-        int diff = maxHeap.size() - minHeap.size();
-        // maintain that size(maxHeap)-size(minHeap) in {0, 1}
-        if (!(diff == 0 || diff == 1)) {
-            T move = maxHeap.poll();
-            minHeap.add(move);
+        if (maxHeap.size() - minHeap.size() > 1 || (!minHeap.isEmpty() && (maxHeap.peek().doubleValue() - minHeap.peek().doubleValue()) > 1e-8)) {
+            minHeap.offer(maxHeap.poll());
         }
         return getMedian();
     }

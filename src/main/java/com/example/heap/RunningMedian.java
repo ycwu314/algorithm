@@ -11,6 +11,17 @@ import java.util.PriorityQueue;
  * <a href="http://posts.careerengine.us/p/57479aeb532b8ee75e0c4536">Google面试题14 | 寻找中位数</a>
  * <p>
  * <a href="http://gaocegege.com/Blog/algorithm/dynamicmedian">最大最小堆计算动态中位数</a>
+ * <pre>
+ * 假设数列L分成两个集合A, B。
+ * 1. A中所有元素都小于等于B
+ * 2. A的元素个数==B的元素个数，或者只比B多一个
+ *
+ * 那么中位数是：
+ * 1. L元素个数为奇数，中位数=max(A)
+ * 2. L元素个数为偶数，中位数=avg(max(A), min(B))
+ *
+ * 用最大堆表示A，用最小堆表示B
+ * </pre>
  */
 public class RunningMedian<T extends Number> {
 
@@ -32,9 +43,13 @@ public class RunningMedian<T extends Number> {
     }
 
     public Double add(T x) {
+        // rule 1
         maxHeap.add(x);
-        if (maxHeap.size() - minHeap.size() > 1 || (!minHeap.isEmpty() && (maxHeap.peek().doubleValue() - minHeap.peek().doubleValue()) > 1e-8)) {
-            minHeap.offer(maxHeap.poll());
+        minHeap.offer(minHeap.poll());
+
+        // rule 2
+        if (maxHeap.size() < minHeap.size()) {
+            maxHeap.offer(minHeap.poll());
         }
         return getMedian();
     }

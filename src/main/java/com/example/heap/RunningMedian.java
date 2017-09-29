@@ -45,7 +45,7 @@ public class RunningMedian<T extends Number> {
     public Double add(T x) {
         // rule 1
         maxHeap.add(x);
-        minHeap.offer(minHeap.poll());
+        minHeap.offer(maxHeap.poll());
 
         // rule 2
         if (maxHeap.size() < minHeap.size()) {

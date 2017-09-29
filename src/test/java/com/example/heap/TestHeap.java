@@ -1,9 +1,6 @@
 package com.example.heap;
 
 import com.example.util.ArrayUtil;
-
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -13,24 +10,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by Administrator on 2017/9/23.
  */
-public class TestHeap {
-
-    private final Comparator<Integer> ASC = new Comparator<Integer>() {
-        @Override
-        public int compare(Integer o1, Integer o2) {
-            return o1.compareTo(o2);
-        }
-    };
-
-    private final Comparator<Integer> DESC = new Comparator<Integer>() {
-        @Override
-        public int compare(Integer o1, Integer o2) {
-            return -o1.compareTo(o2);
-        }
-    };
+public class TestHeap extends HeapTestBase {
 
     @Test
     public void testHeapify() throws NoSuchFieldException, IllegalAccessException {

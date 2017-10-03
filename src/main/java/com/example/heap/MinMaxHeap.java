@@ -83,6 +83,106 @@ public class MinMaxHeap<E> {
         array[k] = x;
     }
 
+    public E removeMin() {
+        if (size == 0) {
+            return null;
+        }
+
+        E min = (E) array[1];
+        Object x = array[size];
+        array[size--] = null;
+
+        if (size == 0) {
+            return min;
+        }
+
+        int k = 1;
+        while (true) {
+            Object c;
+            // element(left) <= element(right)
+            int sibling = k + 1;
+            if (sibling <= size && sibling % 2 == 0 && comparator.compare((E) x, (E) (c = array[sibling])) > 0) {
+                array[k] = c;
+                k = sibling;
+                continue;
+            }
+
+            // compare with min{k's left child, k's sibling's left child}
+            int smaller = 2 * k + 1;
+            if (smaller > size) {
+                break;
+            }
+
+            c = array[smaller];
+            int right = 2 * sibling + 1;
+            if (right <= size && comparator.compare((E) c, (E) array[right]) > 0) {
+                c = array[smaller = right];
+            }
+
+            if (comparator.compare((E) x, (E) c) > 0) {
+                array[k] = c;
+                k = smaller;
+            } else {
+                break;
+            }
+
+        }
+        array[k] = x;
+        return min;
+
+    }
+
+    public E removeMax() {
+        if (size == 0) {
+            return null;
+        }
+
+        E max, x;
+        if (size == 1 || size == 2) {
+            max = (E) (size == 1 ? array[1] : array[2]);
+            array[size--] = null;
+            return max;
+        } else {
+            max = (E) array[2];
+            x = (E) array[size];
+            array[size--] = null;
+        }
+
+        int k = 2;
+        while (true) {
+            Object c;
+            int sibling = k - 1;
+            // element(left) <= element(right)
+            if (k % 2 == 0 && comparator.compare(x, (E) (c = array[sibling])) < 0) {
+                array[k] = c;
+                k = sibling;
+                continue;
+            }
+
+            int larger = 2 * (sibling + 1);
+            if (larger > size) {
+                break;
+            }
+
+            c = array[larger];
+            int right = 2 * (k + 1);
+            if (right <= size && comparator.compare((E) array[right], (E) array[larger]) > 0) {
+                c = array[larger = right];
+            }
+
+            if (comparator.compare(x, (E) c) < 0) {
+                array[k] = c;
+                k = larger;
+            } else {
+                break;
+            }
+
+        }
+
+        array[k] = x;
+        return max;
+    }
+
     /**
      * 1-based
      *

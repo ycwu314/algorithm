@@ -88,12 +88,26 @@ public class MinMaxHeapV2<E> {
         }
 
         int k = 1;
-
         while (k < size) {
             int m = findMinOfChildAndGrandchildren(k);
             if (m != NOT_EXISTS && comparator.compare((E) array[m], x) < 0) {
                 array[k] = array[m];
                 k = m;
+
+                // m is the smallest and at child level (max level), then swap array[m] and x,
+                // now the max level and min level are correct
+                if (m <= ((k << 1) + 1)) {
+                    break;
+                } else {
+                    // m is at grand child level(min level)
+                    // when x sifts down to array[m] where is in min level,
+                    // check again x is less than its parent(in max level)
+                    int pm = m >> 1;
+                    if (comparator.compare(x, (E) array[pm]) > 0) {
+                        array[m] = array[pm];
+                        k = pm;
+                    }
+                }
             } else {
                 break;
             }
@@ -144,6 +158,18 @@ public class MinMaxHeapV2<E> {
             if (m != NOT_EXISTS && comparator.compare((E) array[m], x) > 0) {
                 array[k] = array[m];
                 k = m;
+
+                if (m <= ((k << 1) + 1)) {
+                    // m is a child and at min level
+                    break;
+                } else {
+                    // m is a grand child and at max level, parent(m) is at min level
+                    int pm = m >> 1;
+                    if (comparator.compare(x, (E) array[pm]) < 0) {
+                        array[k] = array[pm];
+                        k = pm;
+                    }
+                }
             } else {
                 break;
             }

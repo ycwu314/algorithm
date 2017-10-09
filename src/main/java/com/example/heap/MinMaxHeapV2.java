@@ -13,8 +13,9 @@ public class MinMaxHeapV2<E> {
     private Comparator<E> comparator;
     private int size = 0;
 
-    public static final int MIN = 0;
-    public static final int MAX = 1;
+    //
+    public static final int MIN = 1;
+    public static final int MAX = 0;
     private static final int NOT_EXISTS = -1;
 
 
@@ -194,11 +195,12 @@ public class MinMaxHeapV2<E> {
     }
 
     public int level(int i) {
-        int k = 1, j = 0;
+        int k = 1, j = 1;
         while ((k <<= 1) <= i) {
             j++;
         }
-        return j % 2 == 0 ? MIN : MAX;
+        // j % 2 == 0 ? MAX : MIN
+        return j & 1;
     }
 
 

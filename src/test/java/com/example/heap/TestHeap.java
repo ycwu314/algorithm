@@ -104,6 +104,13 @@ public class TestHeap extends HeapTestBase {
         assertEquals(21, minHeap.peek(7).intValue());
     }
 
-
+    @Test
+    public void testRemoveAtTop() {
+        Heap<Integer> minHeap = new Heap<>(8, ASC);
+        minHeap.offer(3);
+        minHeap.offer(2);
+        assertEquals(2, minHeap.removeAt(0).intValue());
+        assertEquals(3, minHeap.peek(0).intValue());
+    }
 
 }

@@ -185,6 +185,7 @@ public class Heap<E> {
             return x;
         }
 
+        // moved < parent(i), then sift up. otherwise sift down
         int parent = (i - 1) >> 1;
         if (comparator.compare(moved, (E) array[parent]) < 0) {
             array[i] = array[parent];

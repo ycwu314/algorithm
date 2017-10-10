@@ -64,7 +64,7 @@ public class Heap<E> {
 
     // build heap
     private void heapify() {
-        for (int i = count / 2 - 1; i >= 0; i--) {
+        for (int i = (count - 1) >> 1; i >= 0; i--) {
             siftDown(i, (E) array[i]);
         }
     }

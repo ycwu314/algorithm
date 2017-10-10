@@ -15,11 +15,11 @@ import java.util.Comparator;
 public class Heap<E> {
 
     private Object[] array;
-    private int count = 0;
+    private int size = 0;
     private Comparator<? super E> comparator;
 
-    public Heap(int size, Comparator<? super E> comparator) {
-        array = new Object[size];
+    public Heap(int capacity, Comparator<? super E> comparator) {
+        array = new Object[capacity];
         this.comparator = comparator;
     }
 
@@ -27,22 +27,34 @@ public class Heap<E> {
         this.array = new Object[array.length];
         System.arraycopy(array, 0, this.array, 0, array.length);
         this.comparator = comparator;
-        count = array.length;
+        size = array.length;
         heapify();
+    }
+
+    public void clear() {
+        size = 0;
+        array = new Object[array.length];
     }
 
     public E peek() {
         return (E) array[0];
     }
 
+    public E peek(int i) {
+        if (i < 0 || i >= size) {
+            throw new ArrayIndexOutOfBoundsException(i);
+        }
+        return (E) array[i];
+    }
+
     public E poll() {
-        if (count == 0) {
+        if (size == 0) {
             return null;
         }
         E e = (E) array[0];
 
-        Object a = array[count - 1];
-        array[--count] = null;
+        Object a = array[size - 1];
+        array[--size] = null;
         array[0] = a;
 
         siftDown(0, (E) array[0]);
@@ -52,19 +64,19 @@ public class Heap<E> {
 
 
     public void offer(E e) {
-        if (count == array.length) {
+        if (size == array.length) {
             throw new ArrayIndexOutOfBoundsException("heap is full");
         }
-        array[count++] = e;
-        if (count > 1) {
-            siftUp(count - 1, e);
+        array[size++] = e;
+        if (size > 1) {
+            siftUp(size - 1, e);
         }
 
     }
 
     // build heap
     private void heapify() {
-        for (int i = (count - 1) >> 1; i >= 0; i--) {
+        for (int i = (size - 1) >> 1; i >= 0; i--) {
             siftDown(i, (E) array[i]);
         }
     }
@@ -76,13 +88,13 @@ public class Heap<E> {
      * @see java.util.PriorityQueue##siftDown(int, Object)
      */
     private void siftDown(int i, E x) {
-        int half = count >>> 1;
+        int half = size >>> 1;
         while (i < half) {
             int child = (i << 1) + 1;
             int right = child + 1;
             Object c = array[child];
             // find the smaller of left and right
-            if (right < count && comparator.compare((E) array[right], (E) c) < 0) {
+            if (right < size && comparator.compare((E) array[right], (E) c) < 0) {
                 c = array[child = right];
             }
             if (comparator.compare(x, (E) c) <= 0) {
@@ -104,15 +116,15 @@ public class Heap<E> {
     // assume min heap
     @Deprecated
     private void siftDownOriginal(int i) {
-        int half = count >>> 1;
+        int half = size >>> 1;
         while (i < half) {
             int left = (i << 1) + 1;  // 2 * i + 1;
             int right = left + 1;   // 2 * (i + 1);
             int target = i;
-            if (left < count && comparator.compare((E) array[left], (E) array[target]) < 0) {
+            if (left < size && comparator.compare((E) array[left], (E) array[target]) < 0) {
                 target = left;
             }
-            if (right < count && comparator.compare((E) array[right], (E) array[target]) < 0) {
+            if (right < size && comparator.compare((E) array[right], (E) array[target]) < 0) {
                 target = right;
             }
             if (target == i) {
@@ -142,7 +154,7 @@ public class Heap<E> {
     // assume min heap
     @Deprecated
     private void siftUpOriginal() {
-        int i = count - 1;
+        int i = size - 1;
         while (i > 0) {
             int parent = (i - 1) / 2;
             if (comparator.compare((E) array[i], (E) array[parent]) < 0) {
@@ -156,4 +168,31 @@ public class Heap<E> {
         }
     }
 
+    public E removeAt(int i) {
+        if (i < 0 || i >= size) {
+            throw new ArrayIndexOutOfBoundsException(i);
+        }
+
+        if (i == 0) {
+            return poll();
+        }
+
+        E x = (E) array[i];
+        E moved = (E) array[--size];
+        array[size] = null;
+        // i is the last element
+        if (size == i) {
+            return x;
+        }
+
+        int parent = (i - 1) >> 1;
+        if (comparator.compare(moved, (E) array[parent]) < 0) {
+            array[i] = array[parent];
+            i = parent;
+            siftUp(i, moved);
+        } else {
+            siftDown(i, moved);
+        }
+        return x;
+    }
 }

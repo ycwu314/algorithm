@@ -65,4 +65,45 @@ public class TestHeap extends HeapTestBase {
         minHeap.offer(-1);
         assertEquals(-1, minHeap.peek().intValue());
     }
+
+    @Test
+    public void testRemoveAtLastElement() {
+        Heap<Integer> minHeap = new Heap<>(8, ASC);
+        minHeap.offer(1);
+        minHeap.offer(2);
+        minHeap.offer(3);
+        // indexed from 0
+        minHeap.removeAt(2);
+        assertEquals(1, minHeap.peek(0).intValue());
+        assertEquals(2, minHeap.peek(1).intValue());
+    }
+
+    /////////////////////////////////////////////////////////
+
+    /**
+     * <a href="http://www.mathcs.emory.edu/~cheung/Courses/171/Syllabus/9-BinTree/heap-delete.html">Deleting a node (at a specific location) from a heap</a>
+     */
+    @Test
+    public void testRemoveAtWithSiftUp() {
+        Integer[] arr = new Integer[]{1, 9, 22, 17, 11, 33, 27, 21, 19};
+        Heap<Integer> minHeap = new Heap<>(arr, ASC);
+
+        assertEquals(33, minHeap.removeAt(5).intValue());
+        assertEquals(19, minHeap.peek(2).intValue());
+        assertEquals(22, minHeap.peek(5).intValue());
+    }
+
+    @Test
+    public void testRemoveAtWithSiftDown() {
+        Integer[] arr = new Integer[]{1, 5, 6, 9, 11, 8, 15, 17, 21};
+        Heap<Integer> minHeap = new Heap<>(arr, ASC);
+
+        assertEquals(5, minHeap.removeAt(1).intValue());
+        assertEquals(9, minHeap.peek(1).intValue());
+        assertEquals(17, minHeap.peek(3).intValue());
+        assertEquals(21, minHeap.peek(7).intValue());
+    }
+
+
+
 }
